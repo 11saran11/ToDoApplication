@@ -4,7 +4,7 @@ import './App.css';
 import Footer from './components/footer/index';
 import TodoList from './components/listTodo/index';
 import Spinner from './components/spinner';
-import {getTodoById, setTodoData} from './action';
+import { getTodoById, setTodoData } from './action';
 import AddNew from './components/addNew/index';
 
 function App() {
@@ -13,11 +13,11 @@ function App() {
   const dispatch = useDispatch();
 
   // useState
-  const [linkType,setLinkType] = useState('new');
-  const [todoList,setTodoList] = useState([]);
-  const [totalItem,setTotalItem] = useState(list && list.length > 0 ? list.length : 0)
-  const[activeTab,setActiveTab] = useState('All')
-  const [loading,setLoading] = useState(false)
+  const [linkType, setLinkType] = useState('new');
+  const [todoList, setTodoList] = useState([]);
+  const [totalItem, setTotalItem] = useState(list && list.length > 0 ? list.length : 0)
+  const [activeTab, setActiveTab] = useState('All')
+  const [loading, setLoading] = useState(false)
 
   // events
   const FooterLinkClick = (type) => {
@@ -29,7 +29,7 @@ function App() {
 
   const onSearch = (name) => {
     setLoading(true);
-    const filterList = list && list.length > 0 && list.filter(d => d.label === name);
+    const filterList = list && list.length > 0 && list.filter(d => d.label.toLowerCase().startsWith(name.toLowerCase()));
     filterList && setTodoList(filterList)
     filterList && setTotalItem(filterList.length)
     setLoading(false)
@@ -41,18 +41,18 @@ function App() {
     setLinkType(data)
     setActiveTab(data);
 
-    if(data === 'All'){
+    if (data === 'All') {
       setTodoList(list)
       setTotalItem(list.length)
       setLoading(false)
     }
-    else if(data === 'Active'){
+    else if (data === 'Active') {
       const filterData = list && list.length > 0 && list.filter(d => d.isCompleted === 0);
       filterData && setTodoList(filterData);
       setTotalItem(filterData.length)
       setLoading(false)
     }
-    else if(data === 'Completed'){
+    else if (data === 'Completed') {
       const filterData = list && list.length > 0 && list.filter(d => d.isCompleted !== 0);
       filterData && setTodoList(filterData);
       setTotalItem(filterData.length)
@@ -62,23 +62,23 @@ function App() {
 
   // useEffect
   useEffect(() => {
-    if(list && list.length){
+    if (list && list.length) {
       setTotalItem(list.length)
     }
-  },[list])
+  }, [list])
 
   useEffect(() => {
     let tData = localStorage.getItem('toDoList');
     tData = tData && tData.length > 0 && JSON.parse(tData)
-    if(tData){
+    if (tData) {
       dispatch(
         setTodoData({
           tData
         })
       )
     }
-  },[])
-  
+  }, [])
+
 
   return (
     <div className="App">
@@ -86,11 +86,11 @@ function App() {
       {loading && <Spinner />}
       <h1 className="title">Things to do</h1>
       {/* ADD NEW BOX */}
-      <AddNew setTotalItem={setTotalItem} onSearch={onSearch} linkType={linkType} todoList={todoList}/>
+      <AddNew setTotalItem={setTotalItem} onSearch={onSearch} linkType={linkType} todoList={todoList} />
       {/* LIST */}
-      <TodoList filterList={todoList} linkType={linkType}/>
+      <TodoList filterList={todoList} linkType={linkType} />
       {/* Footer */}
-      <Footer tabClick={tabClick} totalItem={totalItem} clickHandler={FooterLinkClick} activeTab={activeTab}/>
+      <Footer tabClick={tabClick} totalItem={totalItem} clickHandler={FooterLinkClick} activeTab={activeTab} />
     </div>
   );
 }
